@@ -1,0 +1,66 @@
+### Automating the download of EIA 861 zip files and the extraction of specific datasets and the append across years. 
+
+library(RCurl)
+library(readxl)
+library(XML)
+
+### Get the 861 Zip File Links from EIA
+url = "https://www.eia.gov/electricity/data/eia861/"
+page = getURLContent(url)
+html = htmlParse(page)
+tda = getNodeSet(html, "//table/tr/td[2]/a")
+urlTails = sapply(tda, function(x) xmlGetAttr(x, 'href'))
+links = paste(url, urlTails, sep="")
+
+### Need to loop over accounting for heterogeneity in the files.  PJM LoadDataRead addresses similar problem. 
+### First only years after 2001
+
+in1 = lapply(links, function(x) strsplit(x, 'f861')[[1]][2])
+in2 = lapply(in1, function(x) strsplit(x, '\\.')[[1]][1])
+
+### Look at in2 interactively to determine a cutoff
+end = which(in2 == "01")
+
+for (i in 1:length(links)) {
+
+  temp = tempfile()
+  download.file(links[i], temp)
+  files = unzip(temp, list=TRUE)[[1]]
+
+  if (i < which(in2 == "2012")) {
+  file = files[grepl("sales_ult_cust_2", files, ignore.case=TRUE)]
+  stateSheet = excel_sheets(unzip(temp, file))[[1]]
+  data = data.frame(read_excel(unzip(temp, file), sheet=stateSheet, skip = 2))
+  write.csv(data, paste0("eia861Year", in2[i], ".csv"), row.names=FALSE)
+  }
+
+  if (i == which(in2 == "2012")) {
+  file = files[grepl("retail_sales_2012", files, ignore.case=TRUE)]
+  stateSheet = excel_sheets(unzip(temp, file))[[1]]
+  data = data.frame(read_excel(unzip(temp, file), sheet=stateSheet, skip = 2))
+  write.csv(data, paste0("eia861Year", in2[i], ".csv"), row.names=FALSE)
+  }
+
+  if (i > which(in2 == "2012")) {
+  file = files[grepl("file2", files, ignore.case=TRUE)]
+  stateSheet = excel_sheets(unzip(temp, file))[[1]]
+  print(stateSheet)
+
+  #data = data.frame(read_excel(unzip(temp, file), sheet=stateSheet, skip = 2))
+  #write.csv(data, paste0("eia861Year", in2[i], ".csv"), row.names=FALSE)
+  }
+
+  ## silly inconsistency in 2006, files not in folder called 200X
+  ## skip 2 ends in 2007
+  ## Bunch of wierd stuff happening, but will work it out rm and try again.
+}
+
+
+
+
+[grep("Sales_Ult_Cust_2", unzip(temp, list=TRUE)[[1]])]
+  stateSheet = excel_sheets(unzip(temp, file))[[1]]
+  data = data.frame(read_excel(unzip(temp, file), sheet=stateSheet, skip = 2))
+  unlink(temp)
+
+
