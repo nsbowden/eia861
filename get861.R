@@ -34,7 +34,7 @@ if(dir.exists(outdir)){
 }
 
 
-z = which(in2 == "2001")
+z = which(in2 == "2013")
 
 for (i in 1:z) {
 
@@ -45,8 +45,8 @@ for (i in 1:z) {
   if (i < which(in2 == "2012")) {
   file = files[grepl("sales_ult_cust_2", files, ignore.case=TRUE)]
   stateSheet = excel_sheets(unzip(temp, file, exdir = outdir, junkpaths=FALSE))[[1]]
-  data = data.frame(read_excel(unzip(temp, file, exdir = outdir, junkpaths=FALSE), sheet=stateSheet, skip = 2))
-  write.csv(data, paste0(outdir, "eia861Year", in2[i], ".csv"), row.names=FALSE)
+  d = data.frame(read_excel(unzip(temp, file, exdir = outdir, junkpaths=FALSE), sheet=stateSheet, skip = 2))
+  write.csv(d, paste0(outdir, "eia861Year", in2[i], ".csv"), row.names=FALSE)
   unlink(temp)
   file.remove(file)
   }
@@ -54,8 +54,8 @@ for (i in 1:z) {
   if (i == which(in2 == "2012")) {
   file = files[grepl("retail_sales_2012", files, ignore.case=TRUE)]
   stateSheet = excel_sheets(unzip(temp, file, exdir = outdir, junkpaths=FALSE))[[1]]
-  data = data.frame(read_excel(unzip(temp, file, exdir = outdir, junkpaths=FALSE), sheet=stateSheet, skip = 2))
-  write.csv(data, paste0(outdir, "eia861Year", in2[i], ".csv"), row.names=FALSE)
+  d = data.frame(read_excel(unzip(temp, file, exdir = outdir, junkpaths=FALSE), sheet=stateSheet, skip = 2))
+  write.csv(d, paste0(outdir, "eia861Year", in2[i], ".csv"), row.names=FALSE)
   unlink(temp)
   file.remove(file)
   }
@@ -64,11 +64,11 @@ for (i in 1:z) {
   file = files[grepl("file2", files, ignore.case=TRUE)]
   stateSheet = excel_sheets(unzip(temp, file, exdir = outdir, junkpaths=FALSE))[[1]]
     if ( i < which(in2 == "2007")) {
-    data = data.frame(read_excel(unzip(temp, file, exdir = outdir, junkpaths=FALSE), sheet=stateSheet, skip = 2))
+    d = data.frame(read_excel(unzip(temp, file, exdir = outdir, junkpaths=FALSE), sheet=stateSheet, skip = 2))
     } else {
-    data = data.frame(read_excel(unzip(temp, file, exdir = outdir, junkpaths=FALSE), sheet=stateSheet))
+    d = data.frame(read_excel(unzip(temp, file, exdir = outdir, junkpaths=FALSE), sheet=stateSheet))
     }
-  write.csv(data, paste0(outdir, "eia861Year", in2[i], ".csv"), row.names=FALSE)
+  write.csv(d, paste0(outdir, "eia861Year", in2[i], ".csv"), row.names=FALSE)
   unlink(temp)
   file.remove(file)
   }
