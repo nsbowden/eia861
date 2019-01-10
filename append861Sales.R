@@ -5,7 +5,7 @@
 datadir = "/home/nicholas/Documents/EIA861/eia861/download/"
 setwd(datadir)
 
-f = list.files(datadir)
+f = list.files(datadir, pattern = "eia861Year")
 m = regexpr('[0-9]{4}', f)
 y = as.integer(regmatches(f, m))
 
@@ -57,11 +57,17 @@ d = data.frame(rbind(d1, d2))
 
 d$ownership = gsub("Power Marketer", "Retail Power Marketer", d$ownership)
 d$ownership = gsub("Retail Retail Power Marketer", "Retail Power Marketer", d$ownership)
+d$ownership[is.na(d$ownership) & d$utilityID == 99999] = "Adjustment"
 
-d[d=='0.0'] = '0'
-d[d=='.'] = '0'
 numvars = c('ResRev', 'ResQ', 'ResN', 'ComRev', 'ComQ', 'ComN', 'IndRev', 'IndQ', 'IndN', 'TransRev', 'TransQ', 'TransN', 'TotalRev', 'TotalQ', 'TotalN')
+###2001-2007 missing data - must to NAs first
+d[numvars][is.na(d[numvars])] = '0'
+###2008-2017 missing data
+d[numvars][d[numvars]=='.'] = '0'
+d[numvars] = lapply(d[numvars], as.numeric)
 
-d[numvars] = apply(d[numvars], 2, function(i) as.numeric(gsub(",", "", i)))
-d[numvars][is.na(d[numvars])] = 0
+###
+d$baCode[is.na(d$baCode)] = ""
+###
+d$utilityID[is.na(d$utilityID) & d$utilityName=="withheld"] = 88888
 
