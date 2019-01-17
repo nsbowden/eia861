@@ -24,4 +24,4 @@ The append861Sales.R file contains a single function `append861Sales()`.  Pass t
 > d = append861Sales(datadir)
 ```
 
-The data frame should contain approximatley 58,000 rows and can be analyzed directly or writen to disk. The two functions together should take only a few minutes to run. 
+The data frame should contain approximatley 58,000 rows and can be analyzed directly or writen to disk. The two functions together should take only a few minutes or less to run. 
