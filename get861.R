@@ -40,7 +40,7 @@ getEIA861 = function(datadir) {
   in2 = lapply(in2, function(x) ifelse((nchar(x) == 2 & as.integer(x) < 90), paste0('20', x), x))
   in2 = lapply(in2, function(x) ifelse((nchar(x) == 2 & as.integer(x) > 20), paste0('19', x), x))
 
-  z = which(in2 == "2001")
+  z = which(in2 == "1990")
 
   for (i in 1:z) {
 
@@ -66,7 +66,7 @@ getEIA861 = function(datadir) {
     file.remove(file)
     }
 
-    if (i > which(in2 == "2012")) {
+    if (i > which(in2 == "2012") & i < which(in2=="2000")) {
     file = files[grepl("file2", files, ignore.case=TRUE)]
     stateSheet = excel_sheets(unzip(temp, file, exdir = datadir, junkpaths=FALSE))[[1]]
       if ( i < which(in2 == "2007")) {
@@ -78,8 +78,25 @@ getEIA861 = function(datadir) {
     unlink(temp)
     file.remove(file)
     }
+
+    if (i == which(in2 == "2000") | i == which(in2=="1999")) {
+    file = files[grepl("file2", files, ignore.case=TRUE) | grepl("file3", files, ignore.case=TRUE)]
+      for (j in 1:length(file)) {
+        stateSheet = excel_sheets(unzip(temp, file[j], exdir = datadir, junkpaths=FALSE))[[1]]
+        d = data.frame(read_excel(unzip(temp, file[j], exdir = datadir, junkpaths=FALSE), sheet=stateSheet))
+        write.csv(d, paste0(datadir, "eia861Year", in2[i], "file", j, ".csv"), row.names=FALSE)
+        file.remove(file[j])
+      }
+    unlink(temp)
+    }
+    if (i > which(in2 == "1999")) {
+    file = files[grepl("f861typ1", files, ignore.case=TRUE)]
+    stateSheet = excel_sheets(unzip(temp, file, exdir = datadir, junkpaths=FALSE))[[1]]
+    d = data.frame(read_excel(unzip(temp, file, exdir = datadir, junkpaths=FALSE), sheet=stateSheet))
+    write.csv(d, paste0(datadir, "eia861Year", in2[i], ".csv"), row.names=FALSE)
+    unlink(temp)
+    file.remove(file)
+    }
   }
   unlink(list.dirs(), recursive=TRUE)
 }
-
-
