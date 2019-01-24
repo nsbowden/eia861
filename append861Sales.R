@@ -24,7 +24,7 @@ append861Sales = function(datadir) {
     names(temp) = gsub("SERVICETYPE", "ServiceType", names(temp))
     names(temp) = gsub("BACODE", "BACode", names(temp))
     if (!"BACode" %in% names(temp)) {
-    temp$BACode = ""
+    temp$BACode = NA
     }
     if (is.na(temp[nrow(temp), 'DataYear'])) {
     temp = temp[-nrow(temp),]
@@ -46,7 +46,7 @@ append861Sales = function(datadir) {
     d2 = data.frame(rbind(d2, temp))
   }
 
-  d2$bacode = ""
+  d2$bacode = NA
   d2 = d2[order(names(d2))]
 
   ### Bind first two and clean for further binding
@@ -150,6 +150,6 @@ append861Sales = function(datadir) {
   ### Merge with 1, 2, and 3
 
   ddd = data.frame(rbind(dd, d4))
-  ddd = ddd[order(ddd$utilityid, ddd$year),]
+  ddd = ddd[order(ddd$year, ddd$utilityid),]
   ddd
 }
