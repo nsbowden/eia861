@@ -13,7 +13,7 @@ getEIA861 = function(datadir) {
   library(XML)
 
   if(! "readxl" %in% installed.packages()){
-  install.packages("XML")
+  install.packages("readxl")
   } 
   library(readxl)
 
